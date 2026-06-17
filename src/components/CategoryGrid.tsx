@@ -1,26 +1,82 @@
 import Link from "next/link";
-import { categories } from "@/lib/data";
+import type { CSSProperties } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { yaavImages } from "@/lib/images";
+
+const showcaseTiles = [
+  {
+    id: "servicios",
+    title: "Servicios",
+    subtitle: "Planes, activaciones y chips",
+    label: "Ver servicios",
+    href: "/explorar?categoria=servicios",
+    image: yaavImages.bannerServicios,
+    imageMobile: yaavImages.bannerServiciosMobile,
+    bgPosition: "center center",
+  },
+  {
+    id: "productos",
+    title: "Productos",
+    subtitle: "Equipos y accesorios",
+    label: "Ver productos",
+    href: "/explorar?categoria=productos",
+    image: yaavImages.bannerEquipos,
+    imageMobile: yaavImages.bannerEquiposMobile,
+    bgPosition: "center top",
+  },
+] as const;
+
+function ShowcaseTile({
+  tile,
+}: {
+  tile: (typeof showcaseTiles)[number];
+}) {
+  return (
+    <Link
+      href={tile.href}
+      className="category-showcase__tile group"
+      style={
+        {
+          "--tile-image": `url(${tile.image})`,
+          "--tile-image-mobile": `url(${tile.imageMobile})`,
+          "--tile-position": tile.bgPosition,
+        } as CSSProperties
+      }
+    >
+      <div className="category-showcase__shade" aria-hidden />
+      <div className="category-showcase__caption">
+        <span className="category-showcase__title">{tile.title}</span>
+        <span className="category-showcase__subtitle">{tile.subtitle}</span>
+        <span className="category-showcase__btn">{tile.label}</span>
+      </div>
+    </Link>
+  );
+}
+
+function ShowcasePicker() {
+  return (
+    <div className="category-showcase__picker" role="presentation" aria-hidden>
+      <ChevronLeft className="category-showcase__picker-arrow category-showcase__picker-arrow--left" />
+      <div className="category-showcase__picker-badge">
+        <span className="category-showcase__picker-text">Elige algo</span>
+      </div>
+      <ChevronRight className="category-showcase__picker-arrow category-showcase__picker-arrow--right" />
+    </div>
+  );
+}
 
 export function CategoryGrid() {
+  const [left, right] = showcaseTiles;
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-3xl mx-auto">
-      {categories.map((cat) => (
-        <Link
-          key={cat.id}
-          href={`/explorar?categoria=${cat.id}`}
-          className="category-tile group flex flex-col items-center justify-center px-6 py-10 sm:py-12 text-center"
-        >
-          <span className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-yaavs-navy/5 to-yaav-500/10 text-4xl sm:text-5xl mb-5 shadow-inner group-hover:scale-110 transition-transform duration-300">
-            {cat.icon}
-          </span>
-          <span className="font-display text-lg sm:text-xl font-bold uppercase tracking-[0.15em] text-neutral-900 group-hover:text-yaavs-navy transition-colors">
-            {cat.label}
-          </span>
-          <span className="mt-2 text-xs sm:text-sm text-neutral-500 max-w-xs leading-relaxed">
-            {cat.description}
-          </span>
-        </Link>
-      ))}
+    <div className="category-showcase">
+      <p className="category-showcase__intro">¿Qué buscas hoy?</p>
+      <div className="category-showcase__grid">
+        <ShowcaseTile tile={left} />
+        <ShowcasePicker />
+        <ShowcaseTile tile={right} />
+      </div>
+      <p className="category-showcase__tagline">Encuentra Yaavsers cerca de ti</p>
     </div>
   );
 }

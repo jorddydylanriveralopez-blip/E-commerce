@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PromoBanner } from "@/components/PromoBanner";
+import { HeroTrustStrip } from "@/components/HeroTrustStrip";
 import { CategoryGrid } from "@/components/CategoryGrid";
 import { ServiceCard } from "@/components/ServiceCard";
 import { listings } from "@/lib/data";
@@ -14,18 +15,16 @@ export default function HomePage() {
   return (
     <>
       <PromoBanner />
+      <HeroTrustStrip />
 
-      <section id="categorias" className="border-t border-neutral-200/80 scroll-mt-28 section-card mx-4 sm:mx-6 my-6 rounded-2xl">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-10 sm:py-14">
-          <h2 className="font-display text-center text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-6">
-            ¿Buscas productos o servicios?
-          </h2>
+      <section id="categorias" className="scroll-mt-28 py-5 sm:py-8 bg-white">
+        <div className="content-wrap-90">
           <CategoryGrid />
         </div>
       </section>
 
       <section className="section-elevated border-t border-neutral-200/80">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-10 sm:py-14">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
             <div>
               <h2 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-neutral-900">
@@ -50,7 +49,7 @@ export default function HomePage() {
       </section>
 
       <section className="border-t border-neutral-200/80">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-10 sm:py-14">
           <div className="mb-8 sm:mb-10">
             <h2 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-neutral-900">
               Recién llegados

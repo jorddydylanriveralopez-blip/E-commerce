@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { Search, Menu, X, Heart, ShoppingCart } from "lucide-react";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { YaavserTicker } from "@/components/YaavserTicker";
 import { Logo } from "@/components/Logo";
@@ -19,46 +18,16 @@ const mainNavLinks = [
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const { openCart } = useCart();
-  const pathname = usePathname();
-  const isHome = pathname === "/";
-  const glassHeader = isHome && !scrolled && !mobileOpen;
-
-  useEffect(() => {
-    let ticking = false;
-
-    function update() {
-      setScrolled((prev) => {
-        const next = window.scrollY > 20;
-        return prev === next ? prev : next;
-      });
-      ticking = false;
-    }
-
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(update);
-    }
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const linkClass =
-    "font-display text-[11px] xl:text-xs font-semibold uppercase tracking-[0.08em] text-white/90 hover:text-white px-2.5 xl:px-3 py-2 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap drop-shadow-sm";
+    "header-nav-link font-display text-[11px] xl:text-xs font-semibold uppercase tracking-[0.08em] text-white/90 hover:text-white px-2.5 xl:px-3 py-2 rounded-md transition-colors whitespace-nowrap";
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 safe-top ${
-        glassHeader ? "site-header--glass" : "site-header--solid"
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 safe-top site-header--electric">
       <div className="site-header-utility utility-bar hidden sm:block border-b">
         <div className="mx-auto flex max-w-[1600px] items-center gap-3 lg:gap-5 px-4 sm:px-6 lg:px-8 py-2">
-          <YaavserTicker light={glassHeader} />
+          <YaavserTicker light={false} />
           <div className="flex items-center gap-4 shrink-0 text-[10px] sm:text-[11px] uppercase tracking-wider border-l border-white/10 pl-3 lg:pl-4">
             <Link
               href="/configuracion"
@@ -74,7 +43,7 @@ export function Navbar() {
 
       <div className="site-header-main border-b">
         <div className="mx-auto grid max-w-[1600px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 lg:gap-4 xl:gap-6 px-3 py-3.5 sm:px-6 lg:px-8 lg:py-3">
-          <div className="shrink-0 min-w-0">
+          <div className="site-header-logo-glow shrink-0 min-w-0">
             <Logo priority size="nav" tone="light" prominent />
           </div>
 
@@ -83,7 +52,7 @@ export function Navbar() {
               <Link key={`${link.href}-${link.label}`} href={link.href} className={`${linkClass} inline-flex items-center gap-1.5`}>
                 {link.label}
                 {"badge" in link && link.badge && (
-                  <span className="rounded-sm bg-yaav-600 px-1 py-px text-[7px] font-bold tracking-wider text-white">
+                  <span className="header-nav-badge rounded-sm px-1 py-px text-[7px] font-bold tracking-wider text-white">
                     {link.badge}
                   </span>
                 )}
@@ -129,7 +98,7 @@ export function Navbar() {
 
             <Link
               href="/publicar"
-              className="hidden lg:inline-flex items-center justify-center rounded-md bg-white text-yaavs-navy px-3 xl:px-4 py-2 text-[10px] xl:text-[11px] font-display font-bold uppercase tracking-[0.1em] hover:bg-neutral-100 transition-colors whitespace-nowrap"
+              className="header-cta-publicar hidden lg:inline-flex items-center justify-center rounded-md px-3 xl:px-4 py-2 text-[10px] xl:text-[11px] font-display font-bold uppercase tracking-[0.1em] whitespace-nowrap"
             >
               Publicar
             </Link>
@@ -150,7 +119,7 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden bg-yaavs-navy border-t border-yaavs-navy-light/20 px-4 py-6 space-y-1 safe-bottom">
+        <div className="lg:hidden site-header-mobile-panel px-4 py-6 space-y-1 safe-bottom">
           <form action="/explorar" className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 mb-4">
             <Search className="h-4 w-4 text-white/50" />
             <input
@@ -169,7 +138,7 @@ export function Navbar() {
             >
               <span>{link.label}</span>
               {"badge" in link && link.badge && (
-                <span className="rounded-sm bg-yaav-600 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-white">
+                <span className="header-nav-badge rounded-sm px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-white">
                   {link.badge}
                 </span>
               )}

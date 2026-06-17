@@ -42,7 +42,7 @@ export default function RootLayout({
           <DeferredWidgets />
           <div className="relative z-[1]">
             <Navbar />
-            <main className="[&:not(:has(.hero-banner))]:pt-[var(--site-header-height)]">{children}</main>
+            <main className="pt-[var(--site-header-height)]">{children}</main>
             <Footer />
           </div>
           <StickyPromoBar />
