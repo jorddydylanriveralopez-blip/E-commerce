@@ -13,11 +13,10 @@ import { ContactActions } from "@/components/ContactActions";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { SectionBanner } from "@/components/SectionBanner";
 import {
-  getListingById,
   formatPrice,
   getCategoryLabel,
-  listings,
 } from "@/lib/data";
+import { getAllListings, resolveListingById } from "@/lib/listings";
 import { ServiceCard } from "@/components/ServiceCard";
 
 interface PageProps {
@@ -26,7 +25,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
-  const listing = getListingById(id);
+  const listing = await resolveListingById(id);
   if (!listing) return { title: "Servicio no encontrado" };
   return {
     title: `${listing.title} — Yaavstore`,
@@ -36,11 +35,12 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function ServiceDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const listing = getListingById(id);
+  const listing = await resolveListingById(id);
   if (!listing) notFound();
 
-  const related = listings
-    .filter((l) => l.category === listing.category && l.id !== listing.id)
+  const allInCategory = await getAllListings(listing.category);
+  const related = allInCategory
+    .filter((l) => l.id !== listing.id)
     .slice(0, 3);
 
   const priceLabel = formatPrice(listing.price, listing.priceType);
@@ -48,11 +48,10 @@ export default async function ServiceDetailPage({ params }: PageProps) {
   return (
     <>
       <SectionBanner
-        variant={listing.category === "productos" ? "productos" : "servicios"}
+        variant="detalle"
+        title={listing.title}
         image={listing.image}
         imageAlt={listing.title}
-        width={1200}
-        height={750}
       />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">

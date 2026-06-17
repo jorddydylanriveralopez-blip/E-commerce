@@ -8,6 +8,7 @@ import { ArrowLeft, CheckCircle, ImagePlus } from "lucide-react";
 import { categories } from "@/lib/data";
 import { Category } from "@/lib/types";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { PublishPageShell } from "@/components/PublishPageShell";
 
 function parseInitialCategory(value: string | null): Category | "" {
   if (value === "productos" || value === "servicios") return value;
@@ -32,6 +33,8 @@ function PublishContent() {
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [form, setForm] = useState({
     title: "",
     category: parseInitialCategory(searchParams.get("categoria") ?? searchParams.get("tipo")),
@@ -46,11 +49,14 @@ function PublishContent() {
   const isProduct = form.category === "productos";
   const isService = form.category === "servicios";
   const listingLabel = isProduct ? "producto" : isService ? "servicio" : "anuncio";
-  const listingLabelCap = listingLabel.charAt(0).toUpperCase() + listingLabel.slice(1);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.category) return;
+
+    setSubmitting(true);
+    setSubmitError("");
+
     if (form.whatsapp.trim()) {
       fetch("/api/user/whatsapp", {
         method: "PATCH",
@@ -58,7 +64,35 @@ function PublishContent() {
         body: JSON.stringify({ whatsapp: form.whatsapp }),
       }).catch(() => {});
     }
-    setSubmitted(true);
+
+    try {
+      const res = await fetch("/api/listings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: form.title,
+          description: form.description,
+          category: form.category,
+          price: form.price ? Number(form.price) : undefined,
+          priceType: form.priceType,
+          location: form.location,
+          whatsapp: form.whatsapp,
+          tags: form.tags,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSubmitError(data.error ?? "No se pudo publicar. Intenta de nuevo.");
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Error de conexión. Revisa tu red e intenta de nuevo.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   useEffect(() => {
@@ -78,91 +112,95 @@ function PublishContent() {
 
   if (!session) {
     return (
-      <>
-        <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-8 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Inicio
-        </Link>
-        <div className="glass-card rounded-lg p-5 sm:p-6 border-2 border-yaav-950 shadow-[4px_4px_0_#ea580c]">
-          <LoginForm onSuccess={() => window.location.reload()} />
+      <PublishPageShell>
+        <div className="mx-auto max-w-md px-4 sm:px-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Inicio
+          </Link>
+          <div className="publish-urban-panel">
+            <LoginForm onSuccess={() => window.location.reload()} />
+          </div>
         </div>
-      </div>
-      </>
+      </PublishPageShell>
     );
   }
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 sm:px-6 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-yaav-600 text-white shadow-[4px_4px_0_#1c1917] mb-6">
-          <CheckCircle className="h-8 w-8" />
+      <PublishPageShell>
+        <div className="mx-auto max-w-lg px-4 sm:px-6">
+          <div className="publish-urban-panel publish-urban-panel--success py-10">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-yaav-600 text-white shadow-[4px_4px_0_#1c1917] mb-6">
+              <CheckCircle className="h-8 w-8" />
+            </div>
+            <h1 className="font-display text-2xl font-bold uppercase tracking-tight text-yaav-950">
+              ¡Listo, ya está arriba!
+            </h1>
+            <p className="mt-3 text-muted leading-relaxed">
+              Tu {listingLabel} &ldquo;{form.title}&rdquo; ya está visible en el marketplace Yaavser.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/explorar"
+                className="btn-neon inline-flex items-center justify-center rounded-md px-6 py-3 text-sm min-h-[48px]"
+              >
+                Ver marketplace
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setSubmitted(false);
+                  setForm({
+                    title: "",
+                    category: "",
+                    description: "",
+                    price: "",
+                    priceType: "desde",
+                    location: "",
+                    tags: "",
+                    whatsapp: session?.user?.whatsapp ?? session?.user?.phone ?? "",
+                  });
+                }}
+                className="btn-outline-urban inline-flex items-center justify-center rounded-md px-6 py-3 text-sm min-h-[48px]"
+              >
+                Publicar otro
+              </button>
+            </div>
+          </div>
         </div>
-        <h1 className="font-display text-2xl font-bold uppercase tracking-tight text-yaav-950">
-          ¡Listo, ya está arriba!
-        </h1>
-        <p className="mt-3 text-muted leading-relaxed">
-          Tu {listingLabel} &ldquo;{form.title}&rdquo; ya está visible en el marketplace
-          Yaavser. (Demo: en producción se guardaría en la base de datos.)
-        </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/explorar"
-            className="btn-neon inline-flex items-center justify-center rounded-md px-6 py-3 text-sm min-h-[48px]"
-          >
-            Ver marketplace
-          </Link>
-          <button
-            type="button"
-            onClick={() => {
-              setSubmitted(false);
-              setForm({
-                title: "",
-                category: "",
-                description: "",
-                price: "",
-                priceType: "desde",
-                location: "",
-                tags: "",
-                whatsapp: session?.user?.whatsapp ?? session?.user?.phone ?? "",
-              });
-            }}
-            className="btn-outline-urban inline-flex items-center justify-center rounded-md px-6 py-3 text-sm min-h-[48px]"
-          >
-            Publicar otro
-          </button>
-        </div>
-      </div>
+      </PublishPageShell>
     );
   }
 
   return (
-    <>
-      <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-6 transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Inicio
-      </Link>
+    <PublishPageShell>
+      <div className="mx-auto max-w-2xl px-4 sm:px-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Inicio
+        </Link>
 
-      <div className="mb-8">
-        <span className="badge-bait-yellow inline-block rounded-sm px-3 py-1 text-xs mb-4 rotate-[-1deg]">
-          Gratis · Sin comisión
-        </span>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-yaav-950">
-          Publica tu producto o servicio
-        </h1>
-        <p className="mt-2 text-muted">
-          Elige qué quieres subir y completa el formulario. Los compradores te contactan por WhatsApp.
-        </p>
-      </div>
+        <div className="publish-urban-panel">
+          <div className="mb-8">
+            <span className="badge-bait-yellow inline-block rounded-sm px-3 py-1 text-xs mb-4 rotate-[-1deg]">
+              Gratis · Sin comisión
+            </span>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-yaav-950">
+              Publica tu producto o servicio
+            </h1>
+            <p className="mt-2 text-muted">
+              Elige qué quieres subir y completa el formulario. Los compradores te contactan por WhatsApp.
+            </p>
+          </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
         <fieldset>
           <legend className="block text-sm font-semibold text-yaav-800 mb-3">
             ¿Qué vas a publicar? *
@@ -345,16 +383,27 @@ function PublishContent() {
           />
         </div>
 
+        {submitError && (
+          <p className="text-sm text-red-600 font-medium" role="alert">
+            {submitError}
+          </p>
+        )}
+
         <button
           type="submit"
-          disabled={!form.category}
+          disabled={!form.category || submitting}
           className="w-full rounded-md btn-neon py-4 text-base min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {form.category ? `Publicar ${listingLabel}` : "Elige producto o servicio"}
+          {submitting
+            ? "Publicando..."
+            : form.category
+              ? `Publicar ${listingLabel}`
+              : "Elige producto o servicio"}
         </button>
         </div>
       </form>
-    </div>
-    </>
+        </div>
+      </div>
+    </PublishPageShell>
   );
 }

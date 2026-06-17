@@ -13,7 +13,6 @@ import {
 } from "@/lib/cart";
 import { formatPrice } from "@/lib/data";
 import { SectionBanner } from "@/components/SectionBanner";
-import { yaavImages } from "@/lib/images";
 
 export default function CarritoPage() {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -29,7 +28,11 @@ export default function CarritoPage() {
 
   return (
     <>
-      <SectionBanner variant="carrito" image={yaavImages.bannerEquipos} imageAlt="Carrito" />
+      <SectionBanner
+        variant="carrito"
+        title="Tu carrito"
+        subtitle="Revisa lo que elegiste antes de contactar al vendedor."
+      />
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <Link
         href="/explorar"

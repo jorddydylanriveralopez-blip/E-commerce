@@ -8,7 +8,6 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { SectionBanner } from "@/components/SectionBanner";
 import { comunidadConfig, yaavserAdTypes } from "@/lib/comunidad";
 import { YaavserAdType } from "@/lib/types";
-import { yaavImages } from "@/lib/images";
 
 export default function ComunidadPublicarPage() {
   const { data: session, status } = useSession();
@@ -51,7 +50,11 @@ export default function ComunidadPublicarPage() {
   if (!session) {
     return (
       <>
-        <SectionBanner variant="comunidad" image={yaavImages.bannerPublicar} imageAlt="Publicar en comunidad Yaavser" />
+        <SectionBanner
+          variant="comunidad"
+          title="Publicar en comunidad"
+          subtitle="Inicia sesión para anunciarte entre distribuidores Yaavser."
+        />
         <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
         <Link
           href="/comunidad"
@@ -110,7 +113,11 @@ export default function ComunidadPublicarPage() {
 
   return (
     <>
-      <SectionBanner variant="comunidad" image={yaavImages.bannerPublicar} imageAlt="Publicar en comunidad Yaavser" />
+      <SectionBanner
+        variant="comunidad"
+        title="Anúnciate entre Yaavsers"
+        subtitle="Publica gratis durante el lanzamiento — red B2B para distribuidores."
+      />
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <Link
         href="/comunidad"

@@ -4,20 +4,25 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CreditCard, MessageCircle, ShieldCheck } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { ArrowLeft, CheckCircle, CreditCard, MessageCircle, ShieldCheck } from "lucide-react";
 import {
   type CartItem,
+  clearCart,
   getCartItems,
   getCartSubtotal,
   CART_UPDATED_EVENT,
 } from "@/lib/cart";
 import { formatPrice } from "@/lib/data";
 import { SectionBanner } from "@/components/SectionBanner";
-import { yaavImages } from "@/lib/images";
 
 export default function ComprarPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [confirming, setConfirming] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     function sync() {
@@ -33,9 +38,81 @@ export default function ComprarPage() {
   const subtotal = getCartSubtotal(items);
   const hasNegotiable = items.some((item) => item.priceType === "negociable");
 
+  async function handleConfirm() {
+    if (!session?.user) {
+      router.push("/entrar");
+      return;
+    }
+
+    setConfirming(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/sales", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            sellerId: item.sellerId,
+            sellerName: item.sellerName,
+            listingId: item.id,
+            listingTitle: item.title,
+            listingImage: item.image,
+            category: item.category,
+            price: item.price,
+            priceType: item.priceType,
+          })),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "No se pudo confirmar la compra");
+        return;
+      }
+
+      clearCart();
+      setConfirmed(true);
+    } catch {
+      setError("Error de conexión");
+    } finally {
+      setConfirming(false);
+    }
+  }
+
+  if (confirmed) {
+    return (
+      <>
+        <SectionBanner
+          variant="comprar"
+          title="¡Compra registrada!"
+          subtitle="Los vendedores ya ven tu pedido en su historial."
+        />
+        <div className="mx-auto max-w-lg px-4 py-16 sm:px-6 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-600 text-white mb-6">
+            <CheckCircle className="h-8 w-8" />
+          </div>
+          <h1 className="font-display text-2xl font-bold uppercase text-yaav-950">
+            ¡Compra registrada!
+          </h1>
+          <p className="mt-3 text-muted">
+            Los vendedores fueron notificados en su historial. Contáctalos por WhatsApp para cerrar el trato.
+          </p>
+          <Link href="/perfil/compras" className="btn-neon inline-flex mt-8 rounded-md px-6 py-3 text-sm">
+            Ver mis compras
+          </Link>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      <SectionBanner variant="comprar" image={yaavImages.bannerServicios} imageAlt="Comprar" />
+      <SectionBanner
+        variant="comprar"
+        title="Confirmar compra"
+        subtitle="Revisa tu pedido y confirma para registrar la venta."
+      />
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
       <Link
         href="/carrito"
@@ -101,10 +178,27 @@ export default function ComprarPage() {
       </div>
 
       <div className="mt-8 flex flex-col gap-3">
-        <Link href="/entrar" className="btn-premium w-full justify-center text-xs">
-          <MessageCircle className="h-4 w-4" />
-          Confirmar y contactar vendedor
-        </Link>
+        {error && (
+          <p className="text-sm text-red-600 text-center font-medium" role="alert">
+            {error}
+          </p>
+        )}
+        {session ? (
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={confirming}
+            className="btn-premium w-full justify-center text-xs disabled:opacity-60"
+          >
+            <MessageCircle className="h-4 w-4" />
+            {confirming ? "Confirmando..." : "Confirmar compra"}
+          </button>
+        ) : (
+          <Link href="/entrar" className="btn-premium w-full justify-center text-xs">
+            <MessageCircle className="h-4 w-4" />
+            Inicia sesión para confirmar
+          </Link>
+        )}
         <Link
           href="/explorar?categoria=productos"
           className="text-center text-xs font-display font-bold uppercase tracking-wider text-neutral-500 hover:text-neutral-900 py-3 transition-colors"

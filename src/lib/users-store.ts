@@ -10,12 +10,17 @@ export interface StoredUser {
   whatsapp?: string;
   passwordHash?: string;
   image?: string;
+  birthDate?: string;
+  bio?: string;
+  sellerRating?: number;
+  sellerReviewCount?: number;
   provider: "email" | "phone" | "facebook" | "google" | "instagram";
   createdAt: string;
 }
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
+export const AVATARS_DIR = path.join(DATA_DIR, "avatars");
 
 async function ensureDataDir() {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -171,4 +176,82 @@ export async function updateUserWhatsapp(
   };
   await writeUsers(users);
   return users[idx];
+}
+
+export type ProfileUpdateInput = {
+  name?: string;
+  birthDate?: string | null;
+  bio?: string | null;
+  whatsapp?: string;
+  image?: string | null;
+};
+
+export async function updateUserProfile(
+  userId: string,
+  data: ProfileUpdateInput
+): Promise<StoredUser | null> {
+  const users = await readUsers();
+  const idx = users.findIndex((u) => u.id === userId);
+  if (idx < 0) return null;
+
+  const current = users[idx];
+
+  if (data.name !== undefined) {
+    const trimmed = data.name.trim();
+    if (!trimmed) return null;
+    current.name = trimmed;
+  }
+
+  if (data.birthDate !== undefined) {
+    current.birthDate = data.birthDate || undefined;
+  }
+
+  if (data.bio !== undefined) {
+    current.bio = data.bio?.trim().slice(0, 500) || undefined;
+  }
+
+  if (data.whatsapp !== undefined) {
+    const normalized = normalizePhone(data.whatsapp);
+    if (normalized.length < 10) return null;
+    current.whatsapp = normalized;
+    current.phone = current.phone ?? normalized;
+  }
+
+  if (data.image !== undefined) {
+    current.image = data.image || undefined;
+  }
+
+  if (current.sellerRating === undefined) {
+    current.sellerRating = 5;
+  }
+  if (current.sellerReviewCount === undefined) {
+    current.sellerReviewCount = 0;
+  }
+
+  users[idx] = current;
+  await writeUsers(users);
+  return current;
+}
+
+export async function ensureAvatarsDir() {
+  await fs.mkdir(AVATARS_DIR, { recursive: true });
+}
+
+export function avatarFilePath(userId: string) {
+  return path.join(AVATARS_DIR, `${userId}.jpg`);
+}
+
+export async function saveUserAvatar(userId: string, buffer: Buffer): Promise<string> {
+  await ensureAvatarsDir();
+  const filePath = avatarFilePath(userId);
+  await fs.writeFile(filePath, buffer);
+  return `/api/user/avatar?v=${Date.now()}`;
+}
+
+export async function readUserAvatar(userId: string): Promise<Buffer | null> {
+  try {
+    return await fs.readFile(avatarFilePath(userId));
+  } catch {
+    return null;
+  }
 }

@@ -123,15 +123,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id;
         token.provider = account?.provider ?? "email";
+        token.name = user.name;
+        token.picture = user.image;
       }
-      if (trigger === "update" && session?.whatsapp) {
-        token.whatsapp = session.whatsapp as string;
+      if (trigger === "update" && session) {
+        if (session.name) token.name = session.name as string;
+        if (session.image) token.picture = session.image as string;
+        if (session.whatsapp) token.whatsapp = session.whatsapp as string;
+        if (session.bio !== undefined) token.bio = session.bio as string;
+        if (session.birthDate !== undefined) token.birthDate = session.birthDate as string;
       }
-      if (token.id) {
+
+      const shouldSyncFromDb =
+        Boolean(user) ||
+        trigger === "update" ||
+        (token.id && token.whatsapp === undefined);
+
+      if (shouldSyncFromDb && token.id) {
         const dbUser = await findUserById(token.id as string);
         if (dbUser) {
+          token.name = dbUser.name;
+          token.picture = dbUser.image;
           token.whatsapp = dbUser.whatsapp ?? dbUser.phone;
           token.phone = dbUser.phone;
+          token.bio = dbUser.bio;
+          token.birthDate = dbUser.birthDate;
+          token.sellerRating = dbUser.sellerRating ?? 5;
+          token.sellerReviewCount = dbUser.sellerReviewCount ?? 0;
         }
       }
       return token;
@@ -139,9 +157,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.image = token.picture as string | undefined;
         session.user.provider = token.provider as string;
         session.user.whatsapp = token.whatsapp as string | undefined;
         session.user.phone = token.phone as string | undefined;
+        session.user.bio = token.bio as string | undefined;
+        session.user.birthDate = token.birthDate as string | undefined;
+        session.user.sellerRating = (token.sellerRating as number) ?? 5;
+        session.user.sellerReviewCount = (token.sellerReviewCount as number) ?? 0;
       }
       return session;
     },

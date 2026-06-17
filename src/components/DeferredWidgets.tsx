@@ -20,10 +20,14 @@ const WelcomeGate = dynamic(
 export function DeferredWidgets() {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const hasOwnBackground =
+    pathname === "/entrar" ||
+    pathname === "/publicar" ||
+    pathname.startsWith("/perfil");
 
   return (
     <>
-      {!isHome && <FloatingTechBackground />}
+      {!isHome && !hasOwnBackground && <FloatingTechBackground />}
       {isHome && <FathersDayPromo />}
       {isHome && <WelcomeGate />}
       <YaavBot />

@@ -1,4 +1,4 @@
-import type { ServiceListing } from "@/lib/types";
+import type { Category, ServiceListing } from "@/lib/types";
 
 export type CartItem = {
   id: string;
@@ -6,6 +6,9 @@ export type CartItem = {
   price: number;
   priceType: ServiceListing["priceType"];
   image: string;
+  sellerId: string;
+  sellerName: string;
+  category: Category;
   addedAt: string;
 };
 
@@ -46,6 +49,9 @@ export function addToCart(listing: ServiceListing) {
     price: listing.price,
     priceType: listing.priceType,
     image: listing.image,
+    sellerId: listing.provider.id,
+    sellerName: listing.provider.name,
+    category: listing.category,
     addedAt: new Date().toISOString(),
   });
   writeCart(items);

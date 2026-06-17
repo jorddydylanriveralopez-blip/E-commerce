@@ -10,6 +10,10 @@ declare module "next-auth" {
       provider?: string;
       whatsapp?: string;
       phone?: string;
+      bio?: string;
+      birthDate?: string;
+      sellerRating?: number;
+      sellerReviewCount?: number;
     };
   }
 }
@@ -20,5 +24,9 @@ declare module "next-auth/jwt" {
     provider?: string;
     whatsapp?: string;
     phone?: string;
+    bio?: string;
+    birthDate?: string;
+    sellerRating?: number;
+    sellerReviewCount?: number;
   }
 }
