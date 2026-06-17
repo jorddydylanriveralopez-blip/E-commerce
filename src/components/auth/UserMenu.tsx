@@ -1,0 +1,106 @@
+"use client";
+
+import { useSession, signOut } from "next-auth/react";
+import Link from "next/link";
+import Image from "next/image";
+import { LogIn, LogOut, User, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+
+export function UserMenu({ light = false }: { light?: boolean }) {
+  const { data: session, status } = useSession();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  if (status === "loading") {
+    return (
+      <div className={`h-9 w-20 rounded-full animate-pulse ${light ? "bg-white/20" : "bg-yaav-100"}`} />
+    );
+  }
+
+  if (!session?.user) {
+    return (
+      <Link
+        href="/entrar"
+        className={`inline-flex items-center gap-2 px-2.5 xl:px-3 py-2 text-xs font-display font-semibold uppercase tracking-wider transition-colors min-h-[40px] rounded-md hover:bg-white/10 ${
+          light ? "text-white/80 hover:text-white" : "text-neutral-300 hover:text-white"
+        }`}
+      >
+        <LogIn className="h-4 w-4" />
+        <span className="hidden xl:inline">Entrar</span>
+      </Link>
+    );
+  }
+
+  const initials = session.user.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() ?? "Y";
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 pl-1 pr-3 py-1 hover:opacity-80 transition-opacity"
+      >
+        {session.user.image ? (
+          <Image
+            src={session.user.image}
+            alt={session.user.name ?? "Usuario"}
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-full object-cover"
+            sizes="32px"
+          />
+        ) : (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-yaav-500 to-yaav-600 text-xs font-bold text-white">
+            {initials}
+          </div>
+        )}
+        <span className={`hidden sm:block text-xs font-display uppercase tracking-wider max-w-[100px] truncate ${light ? "text-white/80" : "text-neutral-300"}`}>
+          {session.user.name?.split(" ")[0]}
+        </span>
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${light ? "text-white/60" : "text-muted"} ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border bg-white py-2 shadow-xl z-50">
+          <div className="px-4 py-2 border-b border-border">
+            <p className="text-sm font-semibold text-yaav-900 truncate">{session.user.name}</p>
+            <p className="text-xs text-muted truncate">
+              {session.user.email ?? session.user.provider}
+            </p>
+          </div>
+          <Link
+            href="/publicar"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm text-yaav-800 hover:bg-yaav-100"
+            onClick={() => setOpen(false)}
+          >
+            <User className="h-4 w-4" />
+            Publicar servicio
+          </Link>
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"
+          >
+            <LogOut className="h-4 w-4" />
+            Cerrar sesión
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
