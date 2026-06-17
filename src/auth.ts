@@ -82,23 +82,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         otp: { label: "Código", type: "text" },
       },
       async authorize(credentials) {
-        const phone = normalizePhone((credentials?.phone as string) ?? "");
-        const otp = credentials?.otp as string;
-        if (!phone || !otp) return null;
+        try {
+          const phone = normalizePhone((credentials?.phone as string) ?? "");
+          const otp = credentials?.otp as string;
+          if (!phone || !otp) return null;
 
-        if (!verifyOtp(phone, otp)) return null;
+          if (!(await verifyOtp(phone, otp))) return null;
 
-        let user = await findUserByPhone(phone);
-        if (!user) {
-          user = await createPhoneUser(phone);
+          let user = await findUserByPhone(phone);
+          if (!user) {
+            user = await createPhoneUser(phone);
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+          };
+        } catch (error) {
+          console.error("phone authorize error:", error);
+          return null;
         }
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-        };
       },
     }),
   ],

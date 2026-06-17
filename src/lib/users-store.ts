@@ -1,6 +1,12 @@
 import { promises as fs } from "fs";
 import path from "path";
 import bcrypt from "bcryptjs";
+import { hasDatabase } from "@/lib/db";
+import {
+  createPhoneUserDb,
+  findUserByIdDb,
+  findUserByPhoneDb,
+} from "@/lib/users-db";
 
 export interface StoredUser {
   id: string;
@@ -18,7 +24,10 @@ export interface StoredUser {
   createdAt: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const DATA_DIR =
+  process.env.VERCEL === "1"
+    ? path.join("/tmp", "yaavstore-data")
+    : path.join(process.cwd(), "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 export const AVATARS_DIR = path.join(DATA_DIR, "avatars");
 
@@ -48,11 +57,17 @@ export async function findUserByEmail(email: string): Promise<StoredUser | undef
 
 export async function findUserByPhone(phone: string): Promise<StoredUser | undefined> {
   const normalized = normalizePhone(phone);
+  if (hasDatabase()) {
+    return findUserByPhoneDb(normalized);
+  }
   const users = await readUsers();
   return users.find((u) => u.phone === normalized);
 }
 
 export async function findUserById(id: string): Promise<StoredUser | undefined> {
+  if (hasDatabase()) {
+    return findUserByIdDb(id);
+  }
   const users = await readUsers();
   return users.find((u) => u.id === id);
 }
@@ -89,6 +104,10 @@ export async function createPhoneUser(phone: string, name?: string): Promise<Sto
   const normalized = normalizePhone(phone);
   const existing = await findUserByPhone(normalized);
   if (existing) return existing;
+
+  if (hasDatabase()) {
+    return createPhoneUserDb(normalized, name);
+  }
 
   const user: StoredUser = {
     id: crypto.randomUUID(),

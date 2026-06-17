@@ -120,7 +120,13 @@ export function LoginForm({
         redirect: false,
       });
 
-      if (result?.error) throw new Error("Código incorrecto o expirado");
+      if (result?.error) {
+        throw new Error(
+          result.error === "Configuration"
+            ? "Error de servidor: falta AUTH_SECRET en Vercel. Contacta al administrador."
+            : "Código incorrecto o expirado. Pide uno nuevo."
+        );
+      }
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al verificar");
@@ -296,7 +302,7 @@ export function LoginForm({
               className={`${inputCls} ${dark ? "" : "text-base sm:text-sm min-h-[48px] sm:min-h-0"}`}
             />
             <p className="mt-1.5 text-xs text-muted">
-              Te enviaremos un código de 6 dígitos por SMS
+              Te enviaremos un código de 6 dígitos (SMS cuando esté configurado)
             </p>
           </div>
 

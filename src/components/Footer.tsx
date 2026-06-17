@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { PaymentMethodsStrip } from "@/components/PaymentMethodsStrip";
 
 export function Footer() {
   return (
@@ -45,6 +46,10 @@ export function Footer() {
               <li><span className="text-neutral-400">Términos</span></li>
             </ul>
           </div>
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <PaymentMethodsStrip />
         </div>
 
         <div className="mt-12 pt-6 border-t border-neutral-200 text-center text-[10px] uppercase tracking-widest">

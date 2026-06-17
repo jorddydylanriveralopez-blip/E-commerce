@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { normalizePhone } from "@/lib/users-store";
-import { generateOtp, storeOtp } from "@/lib/otp-store";
+import {
+  generateOtp,
+  isDemoOtpEnabled,
+  storeOtp,
+} from "@/lib/otp-store";
 
 export async function POST(request: Request) {
   try {
@@ -15,19 +19,21 @@ export async function POST(request: Request) {
     }
 
     const code = generateOtp();
-    storeOtp(normalized, code);
+    await storeOtp(normalized, code);
 
-    // En producción: enviar SMS con Twilio, etc.
     console.log(`[Yaavstore OTP] ${normalized} → ${code}`);
 
-    const isDev = process.env.NODE_ENV === "development";
+    const demoMode = isDemoOtpEnabled();
 
     return NextResponse.json({
       success: true,
-      message: "Código enviado",
-      ...(isDev ? { demoCode: code } : {}),
+      message: demoMode
+        ? "Código de prueba generado (SMS no configurado aún)"
+        : "Código enviado por SMS",
+      ...(demoMode ? { demoCode: code } : {}),
     });
-  } catch {
+  } catch (error) {
+    console.error("send-otp error:", error);
     return NextResponse.json({ error: "No se pudo enviar el código" }, { status: 500 });
   }
 }
