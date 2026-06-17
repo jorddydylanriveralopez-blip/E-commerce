@@ -58,19 +58,21 @@ function ExploreContent() {
     <>
       <SectionBanner
         variant={bannerVariant}
-        eyebrow={query ? "Búsqueda" : activeCategory?.label ?? "Marketplace"}
-        title={pageTitle}
-        subtitle={
-          activeCategory?.description ??
-          "Planes pospago, prepago, equipos y más de Yaavsers en tu zona"
-        }
-        icon={activeCategory?.icon ?? "🔎"}
-        stat={statText}
         image={bannerImage}
         imageAlt={pageTitle}
       />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="mb-6">
+        <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-neutral-900">
+          {pageTitle}
+        </h1>
+        <p className="mt-2 text-neutral-500">
+          {activeCategory?.description ??
+            "Planes pospago, prepago, equipos y más de Yaavsers en tu zona"}
+        </p>
+        <p className="mt-1 text-sm text-neutral-500">{statText}</p>
+      </div>
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         <div className="lg:hidden -mx-4 px-4 overflow-x-auto pb-2 scrollbar-hide">
           <div className="flex gap-2 w-max min-w-full">

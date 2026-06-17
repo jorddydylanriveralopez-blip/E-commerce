@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Megaphone, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { YaavserAdCard } from "@/components/YaavserAdCard";
 import { SectionBanner } from "@/components/SectionBanner";
 import { comunidadConfig } from "@/lib/comunidad";
@@ -13,18 +13,18 @@ export default function ComunidadPage() {
 
   return (
     <>
-      <SectionBanner
-        variant="comunidad"
-        eyebrow="Entre Yaavsers"
-        title="Anúnciate entre distribuidores"
-        subtitle="Espacio para que los Yaavsers se encuentren: buscar proveedor, ofrecer portabilidades, colaborar en puestos o promocionar mayoreo. Red B2B, no para clientes finales."
-        icon={<Megaphone className="h-3.5 w-3.5" />}
-        stat={`${sorted.length} avisos activos en la red`}
-        image={yaavImages.bannerPublicar}
-        imageAlt="Comunidad Yaavser"
-      />
+      <SectionBanner variant="comunidad" image={yaavImages.bannerPublicar} imageAlt="Comunidad Yaavser" />
 
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-10 sm:py-14">
+      <div className="max-w-3xl mb-8">
+        <h1 className="font-display text-3xl sm:text-4xl font-bold uppercase tracking-tight text-neutral-900">
+          Anúnciate entre distribuidores
+        </h1>
+        <p className="mt-4 text-neutral-500 text-sm sm:text-base leading-relaxed">
+          Espacio para que los Yaavsers se encuentren: buscar proveedor, ofrecer portabilidades,
+          colaborar en puestos o promocionar mayoreo. Red B2B, no para clientes finales.
+        </p>
+      </div>
       <div className="grid gap-px bg-neutral-200 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl">
         <div className="bg-white p-5 sm:p-6">
           <p className="font-display text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">

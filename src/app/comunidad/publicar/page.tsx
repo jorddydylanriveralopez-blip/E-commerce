@@ -51,15 +51,7 @@ export default function ComunidadPublicarPage() {
   if (!session) {
     return (
       <>
-        <SectionBanner
-          variant="comunidad"
-          eyebrow="Entre Yaavsers"
-          title="Entra para anunciarte"
-          subtitle="Solo Yaavsers verificados pueden publicar en la red B2B"
-          icon={<Megaphone className="h-3.5 w-3.5" />}
-          image={yaavImages.bannerPublicar}
-          imageAlt="Publicar en comunidad Yaavser"
-        />
+        <SectionBanner variant="comunidad" image={yaavImages.bannerPublicar} imageAlt="Publicar en comunidad Yaavser" />
         <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
         <Link
           href="/comunidad"
@@ -118,15 +110,7 @@ export default function ComunidadPublicarPage() {
 
   return (
     <>
-      <SectionBanner
-        variant="comunidad"
-        eyebrow="Gratis en lanzamiento"
-        title="Anúnciate entre Yaavsers"
-        subtitle="Busca proveedor, ofrece servicios B2B o promociona mayoreo. Solo lo ven otros distribuidores."
-        icon={<Megaphone className="h-3.5 w-3.5" />}
-        image={yaavImages.bannerPublicar}
-        imageAlt="Publicar en comunidad Yaavser"
-      />
+      <SectionBanner variant="comunidad" image={yaavImages.bannerPublicar} imageAlt="Publicar en comunidad Yaavser" />
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <Link
         href="/comunidad"
@@ -135,6 +119,19 @@ export default function ComunidadPublicarPage() {
         <ArrowLeft className="h-4 w-4" />
         Comunidad
       </Link>
+
+      <div className="mb-8">
+        <span className="inline-flex items-center gap-1.5 bg-yaav-100 text-yaav-700 px-3 py-1 text-[10px] font-display font-semibold uppercase tracking-[0.15em] mb-4">
+          <Megaphone className="h-3 w-3" />
+          Gratis en lanzamiento
+        </span>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-neutral-900">
+          Anúnciate entre Yaavsers
+        </h1>
+        <p className="mt-2 text-neutral-500 text-sm sm:text-base">
+          Busca proveedor, ofrece servicios B2B o promociona mayoreo. Solo lo ven otros distribuidores.
+        </p>
+      </div>
 
       <div className="mb-8 border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600">
         <p>

@@ -54,15 +54,7 @@ export default function PublishPage() {
   if (!session) {
     return (
       <>
-        <SectionBanner
-          variant="publicar"
-          eyebrow="Publicar gratis"
-          title="Entra para publicar"
-          subtitle="Inicia sesión para subir tu producto o servicio al marketplace Yaavser"
-          icon="📣"
-          image={yaavImages.bannerPublicar}
-          imageAlt="Publicar en Yaavstore"
-        />
+        <SectionBanner variant="publicar" image={yaavImages.bannerPublicar} imageAlt="Publicar en Yaavstore" />
         <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
         <Link
           href="/"
@@ -125,15 +117,7 @@ export default function PublishPage() {
 
   return (
     <>
-      <SectionBanner
-        variant="publicar"
-        eyebrow="Gratis · Sin comisión"
-        title="Publica tu servicio"
-        subtitle="Planes, chips, equipos o lo que vendas. Súbelo y que te contacten por WhatsApp."
-        icon="📣"
-        image={yaavImages.bannerPublicar}
-        imageAlt="Publicar en Yaavstore"
-      />
+      <SectionBanner variant="publicar" image={yaavImages.bannerPublicar} imageAlt="Publicar en Yaavstore" />
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <Link
         href="/"
@@ -142,6 +126,18 @@ export default function PublishPage() {
         <ArrowLeft className="h-4 w-4" />
         Inicio
       </Link>
+
+      <div className="mb-8">
+        <span className="badge-bait-yellow inline-block rounded-sm px-3 py-1 text-xs mb-4 rotate-[-1deg]">
+          Gratis · Sin comisión
+        </span>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-yaav-950">
+          Publica tu servicio
+        </h1>
+        <p className="mt-2 text-muted">
+          Planes, chips, equipos o lo que vendas. Súbelo y que te contacten por WhatsApp.
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="rounded-lg border-2 border-dashed border-yaav-400 bg-yaav-50 p-8 text-center shadow-[3px_3px_0_rgba(28,25,23,0.06)]">
