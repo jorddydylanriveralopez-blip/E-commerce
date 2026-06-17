@@ -51,6 +51,8 @@ export default async function ServiceDetailPage({ params }: PageProps) {
         variant={listing.category === "productos" ? "productos" : "servicios"}
         image={listing.image}
         imageAlt={listing.title}
+        width={1200}
+        height={750}
       />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">

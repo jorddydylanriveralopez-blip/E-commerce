@@ -14,12 +14,16 @@ type SectionBannerProps = {
   variant?: SectionBannerVariant;
   image?: string;
   imageAlt?: string;
+  width?: number;
+  height?: number;
 };
 
 export function SectionBanner({
   variant = "explorar",
   image,
   imageAlt = "Banner de sección",
+  width = 2400,
+  height = 1029,
 }: SectionBannerProps) {
   return (
     <section
@@ -30,13 +34,13 @@ export function SectionBanner({
         <Image
           src={image}
           alt=""
-          fill
+          width={width}
+          height={height}
           priority
           sizes="100vw"
           className="section-banner__image"
         />
       ) : null}
-      <div className="section-banner__overlay" aria-hidden />
     </section>
   );
 }

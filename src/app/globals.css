@@ -283,57 +283,23 @@ main img:not([width]) {
 /* Banner de sección (explorar, comunidad, etc.) */
 .section-banner {
   position: relative;
-  overflow: hidden;
-  isolation: isolate;
   width: 100%;
-  height: clamp(20rem, 42vh, 34rem);
-  min-height: 20rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-@media (min-width: 768px) {
-  .section-banner {
-    height: clamp(22rem, 44vh, 36rem);
-    min-height: 22rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .section-banner {
-    height: clamp(24rem, 46vh, 38rem);
-    min-height: 24rem;
-  }
+  overflow: hidden;
+  background: #f3f4f6;
+  line-height: 0;
 }
 
 .section-banner__image {
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
-}
-
-.section-banner__overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.35) 55%,
-    rgba(8, 22, 51, 0.55) 100%
-  );
-  pointer-events: none;
-}
-
-.section-banner--carrito .section-banner__overlay,
-.section-banner--comprar .section-banner__overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(8, 22, 51, 0.55) 0%,
-    rgba(0, 0, 0, 0.75) 100%
-  );
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  object-position: center top;
 }
 
 .section-banner:not(:has(.section-banner__image)) {
+  min-height: 12rem;
   background: linear-gradient(135deg, #0c1d4a 0%, #081633 50%, #0a0a0a 100%);
 }
 
