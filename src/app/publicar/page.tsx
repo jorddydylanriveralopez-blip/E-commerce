@@ -4,11 +4,12 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, CheckCircle, ImagePlus } from "lucide-react";
+import { CheckCircle, ImagePlus } from "lucide-react";
 import { categories } from "@/lib/data";
 import { Category } from "@/lib/types";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { PublishPageShell } from "@/components/PublishPageShell";
+import { SectionBanner } from "@/components/SectionBanner";
 
 function parseInitialCategory(value: string | null): Category | "" {
   if (value === "productos" || value === "servicios") return value;
@@ -112,26 +113,32 @@ function PublishContent() {
 
   if (!session) {
     return (
-      <PublishPageShell>
-        <div className="mx-auto max-w-md px-4 sm:px-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Inicio
-          </Link>
-          <div className="publish-urban-panel">
-            <LoginForm onSuccess={() => window.location.reload()} />
+      <>
+        <SectionBanner
+          variant="publicar"
+          title="Publica en Yaavstore"
+          subtitle="Inicia sesión para subir tu producto o servicio gratis."
+        />
+        <PublishPageShell>
+          <div className="mx-auto max-w-md px-4 sm:px-6">
+            <div className="publish-urban-panel">
+              <LoginForm onSuccess={() => window.location.reload()} />
+            </div>
           </div>
-        </div>
-      </PublishPageShell>
+        </PublishPageShell>
+      </>
     );
   }
 
   if (submitted) {
     return (
-      <PublishPageShell>
+      <>
+        <SectionBanner
+          variant="publicar"
+          title="¡Publicado!"
+          subtitle={`Tu ${listingLabel} ya está visible en el marketplace.`}
+        />
+        <PublishPageShell>
         <div className="mx-auto max-w-lg px-4 sm:px-6">
           <div className="publish-urban-panel publish-urban-panel--success py-10">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-yaav-600 text-white shadow-[4px_4px_0_#1c1917] mb-6">
@@ -172,21 +179,20 @@ function PublishContent() {
             </div>
           </div>
         </div>
-      </PublishPageShell>
+        </PublishPageShell>
+      </>
     );
   }
 
   return (
-    <PublishPageShell>
+    <>
+      <SectionBanner
+        variant="publicar"
+        title="Publica tu producto o servicio"
+        subtitle="Gratis · Sin comisión — los compradores te contactan por WhatsApp."
+      />
+      <PublishPageShell>
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Inicio
-        </Link>
-
         <div className="publish-urban-panel">
           <div className="mb-8">
             <span className="badge-bait-yellow inline-block rounded-sm px-3 py-1 text-xs mb-4 rotate-[-1deg]">
@@ -405,5 +411,6 @@ function PublishContent() {
         </div>
       </div>
     </PublishPageShell>
+    </>
   );
 }

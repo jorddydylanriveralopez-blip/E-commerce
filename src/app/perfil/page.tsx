@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, Camera, CheckCircle, Package, ShoppingBag, Star } from "lucide-react";
+import { Camera, CheckCircle, Package, ShoppingBag, Star } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { PublishPageShell } from "@/components/PublishPageShell";
+import { SectionBanner } from "@/components/SectionBanner";
 
 type ProfileData = {
   name: string;
@@ -198,36 +199,32 @@ export default function PerfilPage() {
 
   if (!session) {
     return (
-      <PublishPageShell>
-        <div className="mx-auto max-w-md px-4 sm:px-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Inicio
-          </Link>
-          <div className="publish-urban-panel">
-            <h1 className="font-display text-xl font-bold uppercase text-yaav-950 mb-4">
-              Mi perfil
-            </h1>
-            <LoginForm onSuccess={() => window.location.reload()} />
+      <>
+        <SectionBanner
+          variant="perfil"
+          title="Mi perfil"
+          subtitle="Inicia sesión para ver y editar tu cuenta de Yaavser."
+        />
+        <PublishPageShell>
+          <div className="mx-auto max-w-md px-4 sm:px-6">
+            <div className="publish-urban-panel">
+              <LoginForm onSuccess={() => window.location.reload()} />
+            </div>
           </div>
-        </div>
-      </PublishPageShell>
+        </PublishPageShell>
+      </>
     );
   }
 
   return (
-    <PublishPageShell>
+    <>
+      <SectionBanner
+        variant="perfil"
+        title={form.name || "Mi perfil"}
+        subtitle="Tu cuenta, reputación y datos de contacto."
+      />
+      <PublishPageShell>
       <div className="mx-auto max-w-xl px-4 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Inicio
-        </Link>
 
         <div className="publish-urban-panel">
           <h1 className="font-display text-2xl font-bold uppercase tracking-tight text-yaav-950 mb-1">
@@ -398,5 +395,6 @@ export default function PerfilPage() {
         </div>
       </div>
     </PublishPageShell>
+    </>
   );
 }

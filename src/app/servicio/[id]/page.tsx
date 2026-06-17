@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  ArrowLeft,
   BadgeCheck,
   Calendar,
   Eye,
@@ -52,17 +51,18 @@ export default async function ServiceDetailPage({ params }: PageProps) {
         title={listing.title}
         image={listing.image}
         imageAlt={listing.title}
+        breadcrumbs={[
+          { label: "Inicio", href: "/" },
+          { label: "Explorar", href: "/explorar" },
+          {
+            label: getCategoryLabel(listing.category),
+            href: `/explorar?categoria=${listing.category}`,
+          },
+          { label: listing.title },
+        ]}
       />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <Link
-        href="/explorar"
-        className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-6 transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Volver a explorar
-      </Link>
-
       <div className="grid lg:grid-cols-5 gap-8">
         <div className="lg:col-span-3 space-y-4">
           <div

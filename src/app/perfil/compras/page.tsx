@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, ShoppingBag, Smartphone, Wifi } from "lucide-react";
+import { ShoppingBag, Smartphone, Wifi } from "lucide-react";
 import { formatPrice, getCategoryLabel } from "@/lib/data";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { PublishPageShell } from "@/components/PublishPageShell";
+import { SectionBanner } from "@/components/SectionBanner";
 import type { SaleRecord } from "@/lib/sales-db";
 
 type PurchaseStats = {
@@ -79,36 +80,28 @@ export default function ComprasPage() {
 
   if (!session) {
     return (
-      <PublishPageShell>
-        <div className="mx-auto max-w-md px-4 sm:px-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Inicio
-          </Link>
-          <div className="publish-urban-panel">
-            <h1 className="font-display text-xl font-bold uppercase text-yaav-950 mb-4">
-              Mis compras
-            </h1>
-            <LoginForm compact onSuccess={() => window.location.reload()} />
+      <>
+        <SectionBanner variant="perfil-compras" title="Mis compras" subtitle="Inicia sesión para ver tu historial." />
+        <PublishPageShell>
+          <div className="mx-auto max-w-md px-4 sm:px-6">
+            <div className="publish-urban-panel">
+              <LoginForm compact onSuccess={() => window.location.reload()} />
+            </div>
           </div>
-        </div>
-      </PublishPageShell>
+        </PublishPageShell>
+      </>
     );
   }
 
   return (
-    <PublishPageShell>
+    <>
+      <SectionBanner
+        variant="perfil-compras"
+        title="Mis compras"
+        subtitle="Historial de pedidos y contacto con vendedores."
+      />
+      <PublishPageShell>
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <Link
-          href="/perfil"
-          className="inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Mi perfil
-        </Link>
 
         <div className="publish-urban-panel">
           <h1 className="font-display text-2xl font-bold uppercase tracking-tight text-yaav-950 mb-1">
@@ -221,5 +214,6 @@ export default function ComprasPage() {
         </div>
       </div>
     </PublishPageShell>
+    </>
   );
 }

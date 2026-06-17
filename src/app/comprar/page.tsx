@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, CheckCircle, CreditCard, MessageCircle, ShieldCheck } from "lucide-react";
+import { CheckCircle, CreditCard, MessageCircle, ShieldCheck } from "lucide-react";
 import {
   type CartItem,
   clearCart,
@@ -114,13 +114,6 @@ export default function ComprarPage() {
         subtitle="Revisa tu pedido y confirma para registrar la venta."
       />
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
-      <Link
-        href="/carrito"
-        className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-8 transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Volver al carrito
-      </Link>
 
       <div className="flex items-center gap-3 mb-8">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yaav-600 text-white">

@@ -59,6 +59,22 @@ function ExploreContent() {
   const bannerVariant =
     category === "productos" ? "productos" : category === "servicios" ? "servicios" : "explorar";
 
+  const breadcrumbs = [
+    { label: "Inicio", href: "/" },
+    ...(category === "todos" && !query && !filters.ciudad
+      ? [{ label: "Explorar" }]
+      : [
+          { label: "Explorar", href: "/explorar" },
+          ...(activeCategory && category !== "todos"
+            ? [{ label: activeCategory.label }]
+            : query
+              ? [{ label: `“${query}”` }]
+              : filters.ciudad
+                ? [{ label: filters.ciudad }]
+                : []),
+        ]),
+  ];
+
   const statText = loading
     ? "Buscando..."
     : `${results.length} ${itemLabel}${results.length !== 1 ? "s" : ""} disponible${results.length !== 1 ? "s" : ""}`;
@@ -87,6 +103,7 @@ function ExploreContent() {
           activeCategory?.description ??
           "Encuentra Yaavsers cerca de ti — filtra por precio, ciudad y reputación"
         }
+        breadcrumbs={breadcrumbs}
       />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, CheckCircle, Megaphone } from "lucide-react";
+import { CheckCircle, Megaphone } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SectionBanner } from "@/components/SectionBanner";
 import { comunidadConfig, yaavserAdTypes } from "@/lib/comunidad";
@@ -54,15 +54,13 @@ export default function ComunidadPublicarPage() {
           variant="comunidad"
           title="Publicar en comunidad"
           subtitle="Inicia sesión para anunciarte entre distribuidores Yaavser."
+          breadcrumbs={[
+            { label: "Inicio", href: "/" },
+            { label: "Comunidad", href: "/comunidad" },
+            { label: "Publicar" },
+          ]}
         />
         <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
-        <Link
-          href="/comunidad"
-          className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 mb-8 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Comunidad
-        </Link>
         <div className="border border-neutral-200 bg-white p-5 sm:p-6 shadow-sm">
           <LoginForm onSuccess={() => window.location.reload()} />
         </div>
@@ -117,15 +115,13 @@ export default function ComunidadPublicarPage() {
         variant="comunidad"
         title="Anúnciate entre Yaavsers"
         subtitle="Publica gratis durante el lanzamiento — red B2B para distribuidores."
+        breadcrumbs={[
+          { label: "Inicio", href: "/" },
+          { label: "Comunidad", href: "/comunidad" },
+          { label: "Publicar" },
+        ]}
       />
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <Link
-        href="/comunidad"
-        className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 mb-6 transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Comunidad
-      </Link>
 
       <div className="mb-8">
         <span className="inline-flex items-center gap-1.5 bg-yaav-100 text-yaav-700 px-3 py-1 text-[10px] font-display font-semibold uppercase tracking-[0.15em] mb-4">
