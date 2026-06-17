@@ -22,19 +22,19 @@ export type BreadcrumbItem = {
 
 const VARIANT_META: Record<
   SectionBannerVariant,
-  { icon: string; label: string; image: string; imagePosition?: string }
+  { image: string; imagePosition?: string }
 > = {
-  explorar: { icon: "🔍", label: "Marketplace", image: yaavImages.bannerEquipos },
-  productos: { icon: "📱", label: "Productos", image: yaavImages.bannerEquipos, imagePosition: "center top" },
-  servicios: { icon: "📡", label: "Servicios", image: yaavImages.bannerServicios, imagePosition: "center 30%" },
-  comunidad: { icon: "🤝", label: "Comunidad Yaavser", image: yaavImages.bannerPublicar },
-  publicar: { icon: "✨", label: "Publicar", image: yaavImages.bannerPublicar },
-  carrito: { icon: "🛒", label: "Carrito", image: yaavImages.bannerEquipos },
-  comprar: { icon: "💳", label: "Comprar", image: yaavImages.bannerEquipos },
-  detalle: { icon: "📋", label: "Detalle", image: yaavImages.bannerEquipos },
-  perfil: { icon: "👤", label: "Mi cuenta", image: yaavImages.bannerServicios },
-  "perfil-compras": { icon: "🛍️", label: "Mis compras", image: yaavImages.bannerEquipos },
-  "perfil-ventas": { icon: "📦", label: "Mis ventas", image: yaavImages.bannerServicios },
+  explorar: { image: yaavImages.bannerEquipos },
+  productos: { image: yaavImages.bannerEquipos, imagePosition: "center top" },
+  servicios: { image: yaavImages.bannerServicios, imagePosition: "center 30%" },
+  comunidad: { image: yaavImages.bannerPublicar },
+  publicar: { image: yaavImages.bannerPublicar },
+  carrito: { image: yaavImages.bannerEquipos },
+  comprar: { image: yaavImages.bannerEquipos },
+  detalle: { image: yaavImages.bannerEquipos },
+  perfil: { image: yaavImages.bannerServicios },
+  "perfil-compras": { image: yaavImages.bannerEquipos },
+  "perfil-ventas": { image: yaavImages.bannerServicios },
 };
 
 const DEFAULT_BREADCRUMBS: Record<SectionBannerVariant, BreadcrumbItem[]> = {
@@ -166,9 +166,6 @@ export function SectionBanner({
         </nav>
 
         <div className="section-banner__caption">
-          <span className="section-banner__eyebrow">
-            <span aria-hidden>{meta.icon}</span> {meta.label}
-          </span>
           <h1 className="section-banner__title">{title}</h1>
           {subtitle ? <p className="section-banner__subtitle">{subtitle}</p> : null}
         </div>
