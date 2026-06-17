@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { yaavImages } from "@/lib/images";
@@ -23,11 +22,11 @@ export type BreadcrumbItem = {
 
 const VARIANT_META: Record<
   SectionBannerVariant,
-  { icon: string; label: string; image: string }
+  { icon: string; label: string; image: string; imagePosition?: string }
 > = {
   explorar: { icon: "🔍", label: "Marketplace", image: yaavImages.bannerEquipos },
-  productos: { icon: "📱", label: "Productos", image: yaavImages.bannerEquipos },
-  servicios: { icon: "📡", label: "Servicios", image: yaavImages.bannerServicios },
+  productos: { icon: "📱", label: "Productos", image: yaavImages.bannerEquipos, imagePosition: "center top" },
+  servicios: { icon: "📡", label: "Servicios", image: yaavImages.bannerServicios, imagePosition: "center 30%" },
   comunidad: { icon: "🤝", label: "Comunidad Yaavser", image: yaavImages.bannerPublicar },
   publicar: { icon: "✨", label: "Publicar", image: yaavImages.bannerPublicar },
   carrito: { icon: "🛒", label: "Carrito", image: yaavImages.bannerEquipos },
@@ -119,18 +118,17 @@ export function SectionBanner({
       className={`section-banner section-banner--hero section-banner--${variant}`}
       aria-label={ariaLabel}
     >
-      <div className="section-banner__media">
-        <Image
-          src={bgImage}
-          alt=""
-          width={1600}
-          height={640}
-          sizes="100vw"
-          priority={variant === "detalle"}
-          className="section-banner__image"
-        />
-        <div className="section-banner__shade" aria-hidden />
-      </div>
+      <div
+        className="section-banner__media"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundPosition: meta.imagePosition ?? "center center",
+        }}
+        role="img"
+        aria-label={ariaLabel}
+      />
+      <div className="section-banner__shade" aria-hidden />
+      <div className="section-banner__accent" aria-hidden />
 
       <div className="section-banner__content">
         <nav className="section-banner__breadcrumbs" aria-label="Ubicación en el sitio">
