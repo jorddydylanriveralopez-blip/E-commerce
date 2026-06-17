@@ -1,21 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle, ImagePlus } from "lucide-react";
 import { categories } from "@/lib/data";
 import { Category } from "@/lib/types";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { SectionBanner } from "@/components/SectionBanner";
-import { yaavImages } from "@/lib/images";
+
+function parseInitialCategory(value: string | null): Category | "" {
+  if (value === "productos" || value === "servicios") return value;
+  return "";
+}
 
 export default function PublishPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-lg px-4 py-20 text-center text-muted">
+          Cargando...
+        </div>
+      }
+    >
+      <PublishContent />
+    </Suspense>
+  );
+}
+
+function PublishContent() {
+  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     title: "",
-    category: "" as Category | "",
+    category: parseInitialCategory(searchParams.get("categoria") ?? searchParams.get("tipo")),
     description: "",
     price: "",
     priceType: "desde" as "fijo" | "desde" | "hora" | "negociable",
@@ -24,8 +43,14 @@ export default function PublishPage() {
     whatsapp: "",
   });
 
+  const isProduct = form.category === "productos";
+  const isService = form.category === "servicios";
+  const listingLabel = isProduct ? "producto" : isService ? "servicio" : "anuncio";
+  const listingLabelCap = listingLabel.charAt(0).toUpperCase() + listingLabel.slice(1);
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!form.category) return;
     if (form.whatsapp.trim()) {
       fetch("/api/user/whatsapp", {
         method: "PATCH",
@@ -54,7 +79,6 @@ export default function PublishPage() {
   if (!session) {
     return (
       <>
-        <SectionBanner variant="publicar" image={yaavImages.bannerPublicar} imageAlt="Publicar en Yaavstore" />
         <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
         <Link
           href="/"
@@ -81,7 +105,7 @@ export default function PublishPage() {
           ¡Listo, ya está arriba!
         </h1>
         <p className="mt-3 text-muted leading-relaxed">
-          Tu servicio &ldquo;{form.title}&rdquo; ya está visible para la comunidad
+          Tu {listingLabel} &ldquo;{form.title}&rdquo; ya está visible en el marketplace
           Yaavser. (Demo: en producción se guardaría en la base de datos.)
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
@@ -117,7 +141,6 @@ export default function PublishPage() {
 
   return (
     <>
-      <SectionBanner variant="publicar" image={yaavImages.bannerPublicar} imageAlt="Publicar en Yaavstore" />
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <Link
         href="/"
@@ -132,14 +155,63 @@ export default function PublishPage() {
           Gratis · Sin comisión
         </span>
         <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-yaav-950">
-          Publica tu servicio
+          Publica tu producto o servicio
         </h1>
         <p className="mt-2 text-muted">
-          Planes, chips, equipos o lo que vendas. Súbelo y que te contacten por WhatsApp.
+          Elige qué quieres subir y completa el formulario. Los compradores te contactan por WhatsApp.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        <fieldset>
+          <legend className="block text-sm font-semibold text-yaav-800 mb-3">
+            ¿Qué vas a publicar? *
+          </legend>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {categories.map((cat) => {
+              const selected = form.category === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      category: cat.id,
+                      priceType:
+                        cat.id === "productos" && prev.priceType === "hora" ? "desde" : prev.priceType,
+                    }))
+                  }
+                  className={`flex flex-col items-start rounded-lg border-2 p-4 text-left transition-all min-h-[120px] ${
+                    selected
+                      ? "border-yaavs-navy bg-yaavs-navy text-white shadow-[3px_3px_0_#1c1917]"
+                      : "border-neutral-300 bg-white text-neutral-900 hover:border-yaavs-navy hover:shadow-sm"
+                  }`}
+                  aria-pressed={selected}
+                >
+                  <span className="text-3xl mb-2" aria-hidden>
+                    {cat.icon}
+                  </span>
+                  <span className="font-display text-sm font-bold uppercase tracking-wide">
+                    {cat.label}
+                  </span>
+                  <span
+                    className={`mt-1 text-xs leading-relaxed ${
+                      selected ? "text-white/80" : "text-neutral-500"
+                    }`}
+                  >
+                    {cat.description}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {!form.category && (
+            <p className="mt-2 text-xs text-neutral-500">Selecciona producto o servicio para continuar.</p>
+          )}
+        </fieldset>
+
+        <div className={`space-y-6 transition-opacity ${form.category ? "opacity-100" : "opacity-50 pointer-events-none"}`}>
         <div className="rounded-lg border-2 border-dashed border-yaav-400 bg-yaav-50 p-8 text-center shadow-[3px_3px_0_rgba(28,25,23,0.06)]">
           <ImagePlus className="mx-auto h-10 w-10 text-yaav-400 mb-3" />
           <p className="text-sm font-medium text-yaav-700">
@@ -150,36 +222,23 @@ export default function PublishPage() {
 
         <div>
           <label htmlFor="title" className="block text-sm font-semibold text-yaav-800 mb-2">
-            Título del servicio *
+            Título del {listingLabel} *
           </label>
           <input
             id="title"
             required
+            disabled={!form.category}
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder="Ej: Plan pospago 50GB, chip prepago, Samsung Galaxy..."
+            placeholder={
+              isProduct
+                ? "Ej: Samsung Galaxy A15, chip prepago, kit accesorios..."
+                : isService
+                  ? "Ej: Plan pospago 50GB, activación a domicilio, portabilidad..."
+                  : "Ej: Plan pospago, chip prepago, Samsung Galaxy..."
+            }
             className="input-field"
           />
-        </div>
-
-        <div>
-          <label htmlFor="category" className="block text-sm font-semibold text-yaav-800 mb-2">
-            Categoría *
-          </label>
-          <select
-            id="category"
-            required
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value as Category })}
-            className="input-field bg-white"
-          >
-            <option value="">Selecciona una categoría</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.icon} {cat.label}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div>
@@ -192,7 +251,13 @@ export default function PublishPage() {
             rows={5}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            placeholder="Describe tu producto o servicio: plan, chip, equipo, cobertura, condiciones..."
+            placeholder={
+              isProduct
+                ? "Marca, modelo, condición, garantía, qué incluye el paquete..."
+                : isService
+                  ? "Plan, cobertura, activación, condiciones, horarios..."
+                  : "Describe tu producto o servicio..."
+            }
             className="input-field resize-none"
           />
         </div>
@@ -229,7 +294,7 @@ export default function PublishPage() {
             >
               <option value="desde">Desde</option>
               <option value="fijo">Precio fijo</option>
-              <option value="hora">Por hora</option>
+              {isService && <option value="hora">Por hora</option>}
               <option value="negociable">Negociable</option>
             </select>
           </div>
@@ -275,17 +340,19 @@ export default function PublishPage() {
             id="tags"
             value={form.tags}
             onChange={(e) => setForm({ ...form, tags: e.target.value })}
-            placeholder="A domicilio, Garantía, Urgencias (separadas por coma)"
+            placeholder={isProduct ? "Nuevo, Garantía, Envío local" : "A domicilio, Sin plazo, Urgencias"}
             className="input-field"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-md btn-neon py-4 text-base min-h-[52px]"
+          disabled={!form.category}
+          className="w-full rounded-md btn-neon py-4 text-base min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Publicar servicio
+          {form.category ? `Publicar ${listingLabel}` : "Elige producto o servicio"}
         </button>
+        </div>
       </form>
     </div>
     </>
