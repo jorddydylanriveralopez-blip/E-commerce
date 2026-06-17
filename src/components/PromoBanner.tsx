@@ -106,6 +106,8 @@ export function PromoBanner() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
+      <div className="hero-banner-header-shade" aria-hidden />
+
       {/* ——— Móvil ——— */}
         <div className="hero-banner-frame md:hidden">
         {slides.map((item, index) => (

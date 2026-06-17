@@ -303,57 +303,90 @@ main img:not([width]) {
   background: linear-gradient(135deg, #0c1d4a 0%, #081633 50%, #0a0a0a 100%);
 }
 
-/* Login /entrar — panel con GIF urbano nocturno */
+/* Login /entrar — ciudad de noche a pantalla completa + cuadro blanco */
+main:has(.login-urban-page) {
+  padding-top: 0;
+}
+
+main:has(.login-urban-page) + footer {
+  display: none;
+}
+
 .login-urban-page {
-  min-height: calc(100dvh - var(--site-header-height));
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
   background: #050508;
 }
 
-.login-urban-panel {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.04);
-}
-
-.login-urban-panel__bg {
-  position: absolute;
+.login-urban-page__bg {
+  position: fixed;
   inset: 0;
   z-index: 0;
+  pointer-events: none;
 }
 
-.login-urban-panel__bg img {
+.login-urban-page__bg img {
   width: 100%;
   height: 100%;
+  min-height: 100vh;
+  max-height: none;
   object-fit: cover;
   object-position: center;
-  transform: scale(1.06);
+  animation: login-urban-bg-drift 28s ease-in-out infinite alternate;
 }
 
-.login-urban-panel__scrim {
-  position: absolute;
+.login-urban-page__overlay {
+  position: fixed;
   inset: 0;
   z-index: 1;
+  pointer-events: none;
   background: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.86) 0%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(248, 250, 252, 0.76) 100%
+    180deg,
+    rgba(5, 5, 8, 0.72) 0%,
+    rgba(5, 5, 8, 0.5) 45%,
+    rgba(5, 5, 8, 0.78) 100%
   );
-  backdrop-filter: blur(1px);
 }
 
-.login-urban-panel__content {
+.login-urban-page__content {
   position: relative;
   z-index: 2;
+  min-height: 100dvh;
+  padding-top: var(--site-header-height);
+  padding-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@keyframes login-urban-bg-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-urban-page__bg img {
+    animation: none;
+  }
+}
+
+.login-urban-panel {
+  background: #fff;
+  border-radius: 1rem;
+  border: 2px solid rgba(28, 25, 23, 0.12);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.35),
+    4px 4px 0 rgba(28, 25, 23, 0.08);
   padding: 1.25rem;
 }
 
 @media (min-width: 640px) {
-  .login-urban-panel__content {
+  .login-urban-panel {
     padding: 1.5rem;
   }
 }
@@ -534,24 +567,57 @@ main img:not([width]) {
 }
 
 .site-header--glass {
-  background: linear-gradient(
-    180deg,
-    rgba(8, 22, 51, 0.9) 0%,
-    rgba(8, 22, 51, 0.68) 42%,
-    rgba(8, 22, 51, 0.28) 72%,
-    transparent 100%
-  );
+  background: transparent;
 }
 
 .site-header--glass .site-header-utility,
 .site-header--glass .site-header-main {
-  background: transparent;
   border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: none;
 }
 
 .site-header--glass .site-header-utility {
   background: #000;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.site-header--glass .site-header-main {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 12, 28, 0.92) 0%,
+    rgba(8, 22, 51, 0.82) 100%
+  );
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.site-header--glass .site-header-main::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2.5rem;
+  height: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 22, 51, 0.55) 0%,
+    rgba(8, 22, 51, 0.18) 55%,
+    transparent 100%
+  );
+}
+
+.site-header--glass .header-search {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.site-header--glass .header-search:focus-within {
+  background: rgba(0, 0, 0, 0.38);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .site-header--solid .site-header-main {
@@ -602,20 +668,21 @@ main img:not([width]) {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 15;
-  height: 9rem;
+  z-index: 20;
+  height: calc(var(--site-header-height) + 4rem);
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgba(8, 22, 51, 0.5) 0%,
-    rgba(8, 22, 51, 0.22) 42%,
-    transparent 78%
+    rgba(4, 6, 14, 0.82) 0%,
+    rgba(8, 22, 51, 0.52) 38%,
+    rgba(8, 22, 51, 0.22) 68%,
+    transparent 100%
   );
 }
 
 @media (min-width: 640px) {
   .hero-banner-header-shade {
-    height: 10.5rem;
+    height: calc(var(--site-header-height) + 5rem);
   }
 }
 

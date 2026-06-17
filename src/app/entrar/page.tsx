@@ -11,7 +11,13 @@ export const metadata = {
 export default function EntrarPage() {
   return (
     <div className="login-urban-page">
-      <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
+      <div className="login-urban-page__bg" aria-hidden>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/backgrounds/city-night.jpg" alt="" width={1920} height={1165} />
+      </div>
+      <div className="login-urban-page__overlay" aria-hidden />
+
+      <div className="login-urban-page__content mx-auto max-w-md px-4 py-10 sm:px-6">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-xs font-display uppercase tracking-wider text-white/80 hover:text-white mb-8 min-h-[44px] transition-colors"
@@ -33,14 +39,7 @@ export default function EntrarPage() {
         </div>
 
         <div className="login-urban-panel">
-          <div className="login-urban-panel__bg" aria-hidden>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/backgrounds/city-night.gif" alt="" />
-          </div>
-          <div className="login-urban-panel__scrim" aria-hidden />
-          <div className="login-urban-panel__content">
-            <LoginForm />
-          </div>
+          <LoginForm />
         </div>
       </div>
     </div>

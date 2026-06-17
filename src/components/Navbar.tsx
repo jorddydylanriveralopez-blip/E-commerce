@@ -48,7 +48,7 @@ export function Navbar() {
   }, []);
 
   const linkClass =
-    "font-display text-[11px] xl:text-xs font-semibold uppercase tracking-[0.08em] text-white/80 hover:text-white px-2.5 xl:px-3 py-2 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap";
+    "font-display text-[11px] xl:text-xs font-semibold uppercase tracking-[0.08em] text-white/90 hover:text-white px-2.5 xl:px-3 py-2 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap drop-shadow-sm";
 
   return (
     <header
