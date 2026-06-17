@@ -12,6 +12,7 @@ import {
   removeFromCart,
 } from "@/lib/cart";
 import { formatPrice } from "@/lib/data";
+import { SectionBanner } from "@/components/SectionBanner";
 
 export default function CarritoPage() {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -26,7 +27,16 @@ export default function CarritoPage() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+    <>
+      <SectionBanner
+        variant="carrito"
+        eyebrow="Tu compra"
+        title="Carrito"
+        subtitle="Revisa tus productos y servicios antes de continuar al checkout"
+        icon={<ShoppingBag className="h-3.5 w-3.5" />}
+        stat={items.length > 0 ? `${items.length} artículo${items.length !== 1 ? "s" : ""} en el carrito` : "Carrito vacío"}
+      />
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <Link
         href="/explorar"
         className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-8 transition-colors"
@@ -34,22 +44,6 @@ export default function CarritoPage() {
         <ArrowLeft className="h-4 w-4" />
         Seguir explorando
       </Link>
-
-      <div className="flex items-center gap-3 mb-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yaavs-navy text-white">
-          <ShoppingBag className="h-6 w-6" />
-        </div>
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-neutral-900">
-            Mi carrito
-          </h1>
-          <p className="text-sm text-neutral-500">
-            {items.length === 0
-              ? "Aquí verás los productos que guardes"
-              : `${items.length} producto${items.length === 1 ? "" : "s"} guardado${items.length === 1 ? "" : "s"}`}
-          </p>
-        </div>
-      </div>
 
       {items.length === 0 ? (
         <div className="rounded-2xl border border-neutral-200 bg-white p-10 text-center shadow-sm">
@@ -120,5 +114,6 @@ export default function CarritoPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

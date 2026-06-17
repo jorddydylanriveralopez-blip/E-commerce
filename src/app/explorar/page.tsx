@@ -4,7 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { ServiceCard } from "@/components/ServiceCard";
+import { SectionBanner } from "@/components/SectionBanner";
 import { categories, getListingsByCategory, searchListings } from "@/lib/data";
+import { yaavImages } from "@/lib/images";
 
 function buildExploreUrl(opts: { categoria?: string; q?: string }) {
   const params = new URLSearchParams();
@@ -40,22 +42,35 @@ function ExploreContent() {
   const itemLabel =
     category === "productos" ? "producto" : category === "servicios" ? "servicio" : "anuncio";
 
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="mb-8">
-        <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-neutral-900">
-          {pageTitle}
-        </h1>
-        <p className="mt-2 text-neutral-500">
-          {activeCategory?.description ??
-            "Planes pospago, prepago, equipos y más de Yaavsers en tu zona"}
-        </p>
-        <p className="mt-1 text-sm text-neutral-500">
-          {results.length} {itemLabel}{results.length !== 1 ? "s" : ""} disponible
-          {results.length !== 1 ? "s" : ""}
-        </p>
-      </div>
+  const bannerVariant =
+    category === "productos" ? "productos" : category === "servicios" ? "servicios" : "explorar";
 
+  const bannerImage =
+    category === "productos"
+      ? yaavImages.bannerEquipos
+      : category === "servicios"
+        ? yaavImages.bannerServicios
+        : yaavImages.bannerServicios;
+
+  const statText = `${results.length} ${itemLabel}${results.length !== 1 ? "s" : ""} disponible${results.length !== 1 ? "s" : ""}`;
+
+  return (
+    <>
+      <SectionBanner
+        variant={bannerVariant}
+        eyebrow={query ? "Búsqueda" : activeCategory?.label ?? "Marketplace"}
+        title={pageTitle}
+        subtitle={
+          activeCategory?.description ??
+          "Planes pospago, prepago, equipos y más de Yaavsers en tu zona"
+        }
+        icon={activeCategory?.icon ?? "🔎"}
+        stat={statText}
+        image={bannerImage}
+        imageAlt={pageTitle}
+      />
+
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         <div className="lg:hidden -mx-4 px-4 overflow-x-auto pb-2 scrollbar-hide">
           <div className="flex gap-2 w-max min-w-full">
@@ -167,6 +182,7 @@ function ExploreContent() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

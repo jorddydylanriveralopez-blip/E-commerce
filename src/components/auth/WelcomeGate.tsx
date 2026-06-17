@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
@@ -14,10 +15,13 @@ const STORAGE_KEY = "yaavstore-welcome-dismissed";
 
 export function WelcomeGate() {
   const { status } = useSession();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [open, setOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
+    if (!isHome) return;
     if (status === "loading") return;
     if (status === "authenticated") return;
 
@@ -30,9 +34,14 @@ export function WelcomeGate() {
       setTimeout(tryOpenWelcome, 1200);
     };
 
+    const fallback = setTimeout(tryOpenWelcome, 8000);
+
     window.addEventListener(FATHERS_DAY_EVENT, onFathersDayClosed);
-    return () => window.removeEventListener(FATHERS_DAY_EVENT, onFathersDayClosed);
-  }, [status]);
+    return () => {
+      clearTimeout(fallback);
+      window.removeEventListener(FATHERS_DAY_EVENT, onFathersDayClosed);
+    };
+  }, [status, isHome]);
 
   function dismiss() {
     sessionStorage.setItem(STORAGE_KEY, "1");
@@ -45,17 +54,22 @@ export function WelcomeGate() {
     window.location.reload();
   }
 
-  if (!open || status === "authenticated") return null;
+  if (!isHome || !open || status === "authenticated") return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 safe-bottom">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={dismiss} aria-hidden />
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={dismiss} aria-hidden />
 
-      <div className="relative w-full max-w-lg bg-[#141414] border border-neutral-700 overflow-hidden shadow-2xl">
+      <div
+        className="relative flex w-full max-w-md flex-col overflow-hidden rounded-xl border border-white/10 bg-neutral-950 shadow-2xl"
+        role="dialog"
+        aria-labelledby="welcome-gate-title"
+        aria-modal="true"
+      >
         <button
           type="button"
           onClick={dismiss}
-          className="absolute top-4 right-4 z-10 p-2 text-neutral-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="absolute top-3 right-3 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white/90 transition-colors hover:bg-black/70 hover:text-white"
           aria-label="Cerrar"
         >
           <X className="h-5 w-5" />
@@ -63,34 +77,42 @@ export function WelcomeGate() {
 
         {!showLogin ? (
           <>
-            <div className="relative h-48 sm:h-56 bg-neutral-900">
+            <div className="relative h-52 shrink-0 sm:h-56">
               <Image
-                src={yaavImages.welcome}
+                src={yaavImages.bannerEquipos}
                 alt=""
-                width={800}
-                height={400}
-                className="h-full w-full object-cover opacity-80"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 28rem"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#141414] to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
             </div>
-            <div className="px-6 sm:px-8 pb-8 pt-4 text-center">
-              <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
+
+            <div className="relative z-10 -mt-10 shrink-0 px-6 pb-7 pt-0 text-center sm:px-8">
+              <p className="font-display text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-400">
                 Antes de que te vayas…
               </p>
-              <h2 className="font-display text-xl sm:text-2xl font-bold uppercase tracking-tight text-white mt-2">
+              <h2
+                id="welcome-gate-title"
+                className="font-display mt-2 text-xl font-bold uppercase tracking-tight text-white sm:text-2xl"
+              >
                 Estos son los más vendidos
               </h2>
-              <p className="mt-3 text-sm text-neutral-400 leading-relaxed">
+              <p className="mt-3 text-sm leading-relaxed text-neutral-400">
                 Los servicios mejor calificados del barrio. Entra para contactar por WhatsApp.
               </p>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="/explorar" className="btn-premium" onClick={dismiss}>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <Link
+                  href="/explorar"
+                  className="btn-premium inline-flex min-h-[48px] items-center justify-center px-8"
+                  onClick={dismiss}
+                >
                   Ver
                 </Link>
                 <button
                   type="button"
                   onClick={() => setShowLogin(true)}
-                  className="btn-outline-urban px-6 py-3 text-xs"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-md border border-white/25 bg-transparent px-8 font-display text-xs font-bold uppercase tracking-wider text-white transition-colors hover:border-white/50 hover:bg-white/10"
                 >
                   Entrar
                 </button>
@@ -98,18 +120,18 @@ export function WelcomeGate() {
             </div>
           </>
         ) : (
-          <div className="px-6 sm:px-8 py-8">
-            <div className="flex justify-center mb-5">
+          <div className="px-6 py-8 sm:px-8">
+            <div className="mb-5 flex justify-center">
               <Logo href={null} size="md" tone="light" />
             </div>
-            <h2 className="font-display text-xl font-bold uppercase tracking-tight text-white text-center mb-6">
+            <h2 className="mb-6 text-center font-display text-xl font-bold uppercase tracking-tight text-white">
               Entra a tu cuenta
             </h2>
             <LoginForm compact onSuccess={handleSuccess} dark />
             <button
               type="button"
               onClick={() => setShowLogin(false)}
-              className="mt-4 w-full py-3 text-sm text-neutral-500 hover:text-white transition-colors"
+              className="mt-4 w-full py-3 text-sm text-neutral-500 transition-colors hover:text-white"
             >
               ← Volver
             </button>

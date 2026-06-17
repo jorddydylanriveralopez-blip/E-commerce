@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, CheckCircle, LogIn, Megaphone } from "lucide-react";
+import { ArrowLeft, CheckCircle, Megaphone } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { SectionBanner } from "@/components/SectionBanner";
 import { comunidadConfig, yaavserAdTypes } from "@/lib/comunidad";
 import { YaavserAdType } from "@/lib/types";
+import { yaavImages } from "@/lib/images";
 
 export default function ComunidadPublicarPage() {
   const { data: session, status } = useSession();
@@ -48,7 +50,17 @@ export default function ComunidadPublicarPage() {
 
   if (!session) {
     return (
-      <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
+      <>
+        <SectionBanner
+          variant="comunidad"
+          eyebrow="Entre Yaavsers"
+          title="Entra para anunciarte"
+          subtitle="Solo Yaavsers verificados pueden publicar en la red B2B"
+          icon={<Megaphone className="h-3.5 w-3.5" />}
+          image={yaavImages.bannerPublicar}
+          imageAlt="Publicar en comunidad Yaavser"
+        />
+        <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
         <Link
           href="/comunidad"
           className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 mb-8 transition-colors"
@@ -56,21 +68,11 @@ export default function ComunidadPublicarPage() {
           <ArrowLeft className="h-4 w-4" />
           Comunidad
         </Link>
-        <div className="text-center mb-8">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center bg-yaavs-navy text-white mb-4">
-            <LogIn className="h-7 w-7" />
-          </div>
-          <h1 className="font-display text-2xl font-bold uppercase tracking-tight text-neutral-900">
-            Entra para anunciarte
-          </h1>
-          <p className="mt-2 text-neutral-500 text-sm">
-            Solo Yaavsers verificados pueden publicar en la red B2B
-          </p>
-        </div>
         <div className="border border-neutral-200 bg-white p-5 sm:p-6 shadow-sm">
           <LoginForm onSuccess={() => window.location.reload()} />
         </div>
       </div>
+      </>
     );
   }
 
@@ -115,7 +117,17 @@ export default function ComunidadPublicarPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+    <>
+      <SectionBanner
+        variant="comunidad"
+        eyebrow="Gratis en lanzamiento"
+        title="Anúnciate entre Yaavsers"
+        subtitle="Busca proveedor, ofrece servicios B2B o promociona mayoreo. Solo lo ven otros distribuidores."
+        icon={<Megaphone className="h-3.5 w-3.5" />}
+        image={yaavImages.bannerPublicar}
+        imageAlt="Publicar en comunidad Yaavser"
+      />
+      <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <Link
         href="/comunidad"
         className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 mb-6 transition-colors"
@@ -123,20 +135,6 @@ export default function ComunidadPublicarPage() {
         <ArrowLeft className="h-4 w-4" />
         Comunidad
       </Link>
-
-      <div className="mb-8">
-        <span className="inline-flex items-center gap-1.5 bg-yaav-100 text-yaav-700 px-3 py-1 text-[10px] font-display font-semibold uppercase tracking-[0.15em] mb-4">
-          <Megaphone className="h-3 w-3" />
-          Gratis en lanzamiento
-        </span>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-neutral-900">
-          Anúnciate entre Yaavsers
-        </h1>
-        <p className="mt-2 text-neutral-500 text-sm sm:text-base">
-          Busca proveedor, ofrece servicios B2B o promociona mayoreo. No aparece en el marketplace
-          de clientes — solo lo ven otros distribuidores.
-        </p>
-      </div>
 
       <div className="mb-8 border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600">
         <p>
@@ -234,5 +232,6 @@ export default function ComunidadPublicarPage() {
         </button>
       </form>
     </div>
+    </>
   );
 }

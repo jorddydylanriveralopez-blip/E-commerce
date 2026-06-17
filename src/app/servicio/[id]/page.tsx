@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { ContactActions } from "@/components/ContactActions";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { SectionBanner } from "@/components/SectionBanner";
 import {
   getListingById,
   formatPrice,
@@ -45,7 +46,18 @@ export default async function ServiceDetailPage({ params }: PageProps) {
   const priceLabel = formatPrice(listing.price, listing.priceType);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <>
+      <SectionBanner
+        variant={listing.category === "productos" ? "productos" : "servicios"}
+        eyebrow={getCategoryLabel(listing.category)}
+        title={listing.title}
+        subtitle={listing.description.slice(0, 120) + (listing.description.length > 120 ? "…" : "")}
+        stat={priceLabel}
+        image={listing.image}
+        imageAlt={listing.title}
+      />
+
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <Link
         href="/explorar"
         className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-6 transition-colors"
@@ -91,9 +103,6 @@ export default async function ServiceDetailPage({ params }: PageProps) {
               <span className="font-display text-xs font-bold uppercase tracking-wider text-yaav-600">
                 {getCategoryLabel(listing.category)}
               </span>
-              <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-yaav-950 mt-1">
-                {listing.title}
-              </h1>
               <p className="sticker-price inline-block rounded-sm px-3 py-1 text-xl sm:text-2xl font-display font-bold mt-3">
                 {priceLabel}
               </p>
@@ -196,5 +205,6 @@ export default async function ServiceDetailPage({ params }: PageProps) {
         </section>
       )}
     </div>
+    </>
   );
 }

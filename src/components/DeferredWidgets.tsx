@@ -24,8 +24,8 @@ export function DeferredWidgets() {
   return (
     <>
       {!isHome && <FloatingTechBackground />}
-      <FathersDayPromo />
-      <WelcomeGate />
+      {isHome && <FathersDayPromo />}
+      {isHome && <WelcomeGate />}
       <YaavBot />
     </>
   );

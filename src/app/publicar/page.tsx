@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, CheckCircle, ImagePlus, LogIn } from "lucide-react";
+import { ArrowLeft, CheckCircle, ImagePlus } from "lucide-react";
 import { categories } from "@/lib/data";
 import { Category } from "@/lib/types";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { SectionBanner } from "@/components/SectionBanner";
+import { yaavImages } from "@/lib/images";
 
 export default function PublishPage() {
   const { data: session, status } = useSession();
@@ -51,7 +53,17 @@ export default function PublishPage() {
 
   if (!session) {
     return (
-      <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
+      <>
+        <SectionBanner
+          variant="publicar"
+          eyebrow="Publicar gratis"
+          title="Entra para publicar"
+          subtitle="Inicia sesión para subir tu producto o servicio al marketplace Yaavser"
+          icon="📣"
+          image={yaavImages.bannerPublicar}
+          imageAlt="Publicar en Yaavstore"
+        />
+        <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-8 transition-colors"
@@ -59,21 +71,11 @@ export default function PublishPage() {
           <ArrowLeft className="h-4 w-4" />
           Inicio
         </Link>
-        <div className="text-center mb-8">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-md bg-yaav-600 text-white shadow-[3px_3px_0_#1c1917] mb-4">
-            <LogIn className="h-7 w-7" />
-          </div>
-          <h1 className="font-display text-2xl font-bold uppercase tracking-tight text-yaav-950">
-            Entra para publicar
-          </h1>
-          <p className="mt-2 text-muted text-sm">
-            Inicia sesión para subir tu servicio al barrio
-          </p>
-        </div>
         <div className="glass-card rounded-lg p-5 sm:p-6 border-2 border-yaav-950 shadow-[4px_4px_0_#ea580c]">
           <LoginForm onSuccess={() => window.location.reload()} />
         </div>
       </div>
+      </>
     );
   }
 
@@ -122,7 +124,17 @@ export default function PublishPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+    <>
+      <SectionBanner
+        variant="publicar"
+        eyebrow="Gratis · Sin comisión"
+        title="Publica tu servicio"
+        subtitle="Planes, chips, equipos o lo que vendas. Súbelo y que te contacten por WhatsApp."
+        icon="📣"
+        image={yaavImages.bannerPublicar}
+        imageAlt="Publicar en Yaavstore"
+      />
+      <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <Link
         href="/"
         className="inline-flex items-center gap-2 text-sm font-medium text-yaav-600 hover:text-yaav-800 mb-6 transition-colors"
@@ -130,18 +142,6 @@ export default function PublishPage() {
         <ArrowLeft className="h-4 w-4" />
         Inicio
       </Link>
-
-      <div className="mb-8">
-        <span className="badge-bait-yellow inline-block rounded-sm px-3 py-1 text-xs mb-4 rotate-[-1deg]">
-          Gratis · Sin comisión
-        </span>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-yaav-950">
-          Publica tu servicio
-        </h1>
-        <p className="mt-2 text-muted">
-          Plomero, vendedor, estilista… lo que hagas. Súbelo y que te contacten por WhatsApp.
-        </p>
-      </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="rounded-lg border-2 border-dashed border-yaav-400 bg-yaav-50 p-8 text-center shadow-[3px_3px_0_rgba(28,25,23,0.06)]">
@@ -292,5 +292,6 @@ export default function PublishPage() {
         </button>
       </form>
     </div>
+    </>
   );
 }
