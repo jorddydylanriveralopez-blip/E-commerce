@@ -32,6 +32,9 @@ yarn-error.log*
 # env files
 .env*
 
+# Claude Code — preferencias locales (no commitear)
+CLAUDE.local.md
+
 # local user data
 /data/
 
