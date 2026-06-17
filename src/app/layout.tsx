@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Oswald, Nunito } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -9,17 +9,11 @@ import { StickyPromoBar } from "@/components/StickyPromoBar";
 import { FloatingSocialBar } from "@/components/FloatingSocialBar";
 import { DeferredWidgets } from "@/components/DeferredWidgets";
 
-const oswald = Oswald({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-oswald",
+  variable: "--font-montserrat",
   display: "swap",
-  weight: ["500", "600", "700"],
-});
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  variable: "--font-nunito",
-  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -42,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${oswald.variable} ${nunito.variable} antialiased`}>
+      <body className={`${montserrat.variable} antialiased`}>
         <AuthProvider>
           <CartProvider>
           <DeferredWidgets />

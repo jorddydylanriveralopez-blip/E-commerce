@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: var(--font-oswald), system-ui, sans-serif;
-  --font-body: var(--font-nunito), system-ui, sans-serif;
+  --font-display: var(--font-montserrat), system-ui, sans-serif;
+  --font-body: var(--font-montserrat), system-ui, sans-serif;
 
   --color-yaav-950: #0a0a0a;
   --color-yaav-900: #141414;
@@ -439,20 +439,48 @@ main img:not([width]) {
 }
 
 .hero-banner {
-  margin-top: var(--site-header-height);
+  /* Banner a pantalla completa; el header flota encima con degradado */
 }
 
 .hero-banner-frame {
   position: relative;
   width: 100%;
-  height: calc(100dvh - var(--site-header-height));
-  min-height: 420px;
+  height: 100dvh;
+  min-height: 520px;
 }
 
 @media (min-width: 768px) {
   .hero-banner-frame {
-    min-height: 480px;
+    min-height: 600px;
   }
+}
+
+.site-header--glass {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 22, 51, 0.9) 0%,
+    rgba(8, 22, 51, 0.68) 42%,
+    rgba(8, 22, 51, 0.28) 72%,
+    transparent 100%
+  );
+}
+
+.site-header--glass .site-header-utility,
+.site-header--glass .site-header-main {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+.site-header--solid .site-header-main {
+  background: var(--color-yaavs-navy);
+  border-color: rgba(26, 58, 122, 0.35);
+  box-shadow: 0 2px 16px rgba(8, 22, 51, 0.22);
+}
+
+.site-header--solid .site-header-utility {
+  background: var(--color-yaavs-navy-dark);
+  border-color: rgba(26, 58, 122, 0.25);
 }
 
 .hero-banner-slide {

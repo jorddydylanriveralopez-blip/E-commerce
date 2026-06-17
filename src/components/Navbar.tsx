@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Search, Menu, X, Heart, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { YaavserTicker } from "@/components/YaavserTicker";
 import { Logo } from "@/components/Logo";
@@ -18,19 +19,46 @@ const mainNavLinks = [
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { openCart } = useCart();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const glassHeader = isHome && !scrolled && !mobileOpen;
 
-  const navBg = "bg-yaavs-navy border-yaavs-navy-light/30 shadow-[0_2px_16px_rgba(8,22,51,0.22)]";
-  const utilityBg = "bg-yaavs-navy-dark border-yaavs-navy-light/20";
+  useEffect(() => {
+    let ticking = false;
+
+    function update() {
+      setScrolled((prev) => {
+        const next = window.scrollY > 20;
+        return prev === next ? prev : next;
+      });
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const linkClass =
-    "font-display text-[11px] xl:text-xs font-semibold uppercase tracking-[0.1em] text-white/75 hover:text-white px-2.5 xl:px-3 py-2 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap";
+    "font-display text-[11px] xl:text-xs font-semibold uppercase tracking-[0.08em] text-white/80 hover:text-white px-2.5 xl:px-3 py-2 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 safe-top">
-      <div className={`utility-bar hidden sm:block border-b ${utilityBg}`}>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 safe-top ${
+        glassHeader ? "site-header--glass" : "site-header--solid"
+      }`}
+    >
+      <div className="site-header-utility utility-bar hidden sm:block border-b">
         <div className="mx-auto flex max-w-[1600px] items-center gap-3 lg:gap-5 px-4 sm:px-6 lg:px-8 py-2">
-          <YaavserTicker />
+          <YaavserTicker light={glassHeader} />
           <div className="flex items-center gap-4 shrink-0 text-[10px] sm:text-[11px] uppercase tracking-wider border-l border-white/10 pl-3 lg:pl-4">
             <Link
               href="/configuracion"
@@ -44,7 +72,7 @@ export function Navbar() {
         </div>
       </div>
 
-      <div className={`border-b ${navBg}`}>
+      <div className="site-header-main border-b">
         <div className="mx-auto grid max-w-[1600px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 lg:gap-4 xl:gap-6 px-3 py-3.5 sm:px-6 lg:px-8 lg:py-3">
           <div className="shrink-0 min-w-0">
             <Logo priority size="nav" tone="light" prominent />
@@ -101,7 +129,7 @@ export function Navbar() {
 
             <Link
               href="/publicar"
-              className="hidden lg:inline-flex items-center justify-center rounded-md bg-white text-yaavs-navy px-3 xl:px-4 py-2 text-[10px] xl:text-[11px] font-display font-bold uppercase tracking-[0.12em] hover:bg-neutral-100 transition-colors whitespace-nowrap"
+              className="hidden lg:inline-flex items-center justify-center rounded-md bg-white text-yaavs-navy px-3 xl:px-4 py-2 text-[10px] xl:text-[11px] font-display font-bold uppercase tracking-[0.1em] hover:bg-neutral-100 transition-colors whitespace-nowrap"
             >
               Publicar
             </Link>
